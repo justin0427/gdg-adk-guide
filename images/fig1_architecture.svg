@@ -8,22 +8,22 @@
 
   <!-- Model 卡 -->
   <rect x="60" y="72" width="230" height="140" rx="12" fill="#e8f0fe" stroke="#4285f4" stroke-width="1.5"/>
-  <circle cx="90" cy="104" r="7" fill="#4285f4"/>
-  <text x="110" y="110" font-size="22" font-weight="700" fill="#1967d2">Model</text>
+  <circle cx="137" cy="104" r="7" fill="#4285f4"/>
+  <text x="157" y="110" font-size="22" font-weight="700" fill="#1967d2">Model</text>
   <text x="175" y="150" text-anchor="middle" font-size="16" fill="#202124">模型 · 大腦</text>
   <text x="175" y="180" text-anchor="middle" font-size="14" fill="#5f6368">地端 LLM（Ollama）</text>
 
   <!-- Tools 卡 -->
   <rect x="315" y="72" width="230" height="140" rx="12" fill="#e6f4ea" stroke="#34a853" stroke-width="1.5"/>
-  <circle cx="345" cy="104" r="7" fill="#34a853"/>
-  <text x="365" y="110" font-size="22" font-weight="700" fill="#188038">Tools</text>
+  <circle cx="395" cy="104" r="7" fill="#34a853"/>
+  <text x="415" y="110" font-size="22" font-weight="700" fill="#188038">Tools</text>
   <text x="430" y="150" text-anchor="middle" font-size="16" fill="#202124">工具 · 手</text>
   <text x="430" y="180" text-anchor="middle" font-size="14" fill="#5f6368">幾個 Python 函式</text>
 
   <!-- Instruction 卡 -->
   <rect x="570" y="72" width="230" height="140" rx="12" fill="#fef7e0" stroke="#fbbc04" stroke-width="1.5"/>
-  <circle cx="600" cy="104" r="7" fill="#fbbc04"/>
-  <text x="620" y="110" font-size="22" font-weight="700" fill="#b06000">Instruction</text>
+  <circle cx="623" cy="104" r="7" fill="#fbbc04"/>
+  <text x="643" y="110" font-size="22" font-weight="700" fill="#b06000">Instruction</text>
   <text x="685" y="150" text-anchor="middle" font-size="16" fill="#202124">指令 · 工作守則</text>
   <text x="685" y="180" text-anchor="middle" font-size="14" fill="#5f6368">一段文字</text>
 
