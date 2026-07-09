@@ -187,13 +187,13 @@ ul.task-list{list-style:none;padding-left:0}
 <p>這是 ADK 的詳細教學，如果有興趣可以再深究：<a href="https://codelabs.developers.google.com/codelabs/cloud-run/tools-make-an-agent?hl=zh-tw#0">Build and deploy a Python AI agent to Cloud Run</a></p>
 <hr/>
 <h2>關卡 0：準備環境</h2>
-<p><a href="https://justin0427.github.io/gdg-adk-demo/docs/PREWORK.html">前置作業</a>應該已經把 Python 環境、Ollama、<code>gemma4:e4b</code> 都裝好了。先啟動這個專案的虛擬環境：</p>
+<p><a href="https://justin0427.github.io/gdg-adk-demo/docs/PREWORK.html">前置作業</a>應該已經把 Python 環境、Ollama、模型（<code>gemma4:e4b</code>，記憶體較少的人是 <code>gemma4:e2b</code>）都裝好了。先啟動這個專案的虛擬環境：</p>
 <div class="codeblock has-os"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><div class="os-variant" data-os="mac"><pre class="code"><code><span class="tok-cmd">source</span> .venv/bin/activate</code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code>.venv\Scripts\activate</code></pre></div></div>
 <div class="callout info"><p><strong>確認一下</strong>：終端機前面出現 <code>(.venv)</code>，代表你已經進入這個專案的乾淨 Python 環境。</p></div>
 <p>接著跑一次環境健檢，一個指令幫你檢查六件事（Python 版本、兩個套件、adk 指令、示範資料、模型服務）：</p>
 <div class="codeblock has-os"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><div class="os-variant" data-os="mac"><pre class="code"><code><span class="tok-cmd">python3</span> check_env.py</code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code><span class="tok-cmd">python</span> check_env.py</code></pre></div></div>
 <div class="callout info"><p><strong>確認一下</strong>：健檢顯示全部 [OK] 就緒。「示範資料」那一項要到關卡 1 之後才會過，現在紅的很正常。</p></div>
-<div class="callout warn"><p><strong>如果出問題</strong>：<a href="https://justin0427.github.io/gdg-adk-demo/docs/PREWORK.html">前置作業</a>沒做完的人，回頭照著補完就好——<code>.venv</code> 沒建立過就先跑 <code>python -m venv .venv</code> 再 <code>pip install -r requirements.txt</code>；模型沒下載就跑 <code>ollama pull gemma4:e4b</code>。每個 [FAIL] 下面也都印了「修法」，照做即可；模型相關的項目沒過也沒關係，關卡 1 到 3 完全用不到模型，可以先往下做。</p></div>
+<div class="callout warn"><p><strong>如果出問題</strong>：<a href="https://justin0427.github.io/gdg-adk-demo/docs/PREWORK.html">前置作業</a>沒做完的人，回頭照著補完就好——<code>.venv</code> 沒建立過就先跑 <code>python -m venv .venv</code> 再 <code>pip install -r requirements.txt</code>；模型沒下載就跑 <code>ollama pull gemma4:e4b</code>（記憶體只有 8GB 或以下的人，改跑 <code>ollama pull gemma4:e2b</code>）。每個 [FAIL] 下面也都印了「修法」，照做即可；模型相關的項目沒過也沒關係，關卡 1 到 3 完全用不到模型，可以先往下做。</p></div>
 <hr/>
 <h2>關卡 1：產生要分析的資料</h2>
 <p>我們用一支小程式，產生一份「長得像真的、但完全是假資料」的存取日誌：</p>
