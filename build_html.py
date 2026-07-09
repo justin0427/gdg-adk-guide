@@ -206,6 +206,14 @@ a:hover{text-decoration:underline}
 strong{font-weight:700}
 code{background:var(--icode-bg);border-radius:4px;padding:.12em .42em;font-size:.88em;color:var(--icode);
   font-family:'SF Mono',Consolas,'Roboto Mono',monospace}
+code[data-tip]{cursor:help;border-bottom:1px dashed var(--muted);position:relative}
+code[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 9px);
+  transform:translateX(-50%);background:var(--ink);color:var(--page);padding:7px 11px;border-radius:7px;
+  font-size:13px;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+  font-weight:400;white-space:normal;width:max-content;max-width:260px;line-height:1.5;
+  box-shadow:0 4px 16px rgba(0,0,0,.28);z-index:20}
+code[data-tip]:hover::before{content:"";position:absolute;left:50%;bottom:calc(100% + 3px);
+  transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);z-index:20}
 .codeblock{margin:1.1em 0}
 .codehead{display:flex;justify-content:space-between;align-items:center;gap:12px;
   background:#171b24;border-radius:10px 10px 0 0;padding:7px 14px;border-bottom:1px solid #2a3040}
@@ -357,9 +365,15 @@ COPY_JS = """
 # =============================================================================
 # 行內語法
 # =============================================================================
+def _code_tip(m):
+    code, tip = m.group(1), m.group(2)
+    return f'<code data-tip="{tip.replace(chr(34), "&quot;")}">{code}</code>'
+
+
 def inline(t):
     t = html.escape(t, quote=False)
     t = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', t)
+    t = re.sub(r'`([^`]+)`\{([^}]+)\}', _code_tip, t)
     t = re.sub(r'`([^`]+)`', r'<code>\1</code>', t)
     t = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', t)
     t = re.sub(r'(?<!\*)\*([^*]+)\*(?!\*)', r'<em>\1</em>', t)
