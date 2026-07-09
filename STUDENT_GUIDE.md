@@ -30,7 +30,7 @@
 
 ## 關卡 0：準備環境
 
-前置作業應該已經把 Python 環境、Ollama、`gemma4:e4b` 都裝好了。先啟動這個專案的虛擬環境：
+[前置作業](https://justin0427.github.io/gdg-adk-demo/docs/PREWORK.html)應該已經把 Python 環境、Ollama、`gemma4:e4b` 都裝好了。先啟動這個專案的虛擬環境：
 
 ```bash 終端機
 .venv\Scripts\activate
@@ -46,7 +46,7 @@ python check_env.py
 
 確認一下：健檢顯示全部 [OK] 就緒。「示範資料」那一項要到關卡 1 之後才會過，現在紅的很正常。
 
-如果出問題：前置作業沒做完的人，回頭照著補完就好——`.venv` 沒建立過就先跑 `python -m venv .venv` 再 `pip install -r requirements.txt`；模型沒下載就跑 `ollama pull gemma4:e4b`。每個 [FAIL] 下面也都印了「修法」，照做即可；模型相關的項目沒過也沒關係，關卡 1 到 3 完全用不到模型，可以先往下做。
+如果出問題：[前置作業](https://justin0427.github.io/gdg-adk-demo/docs/PREWORK.html)沒做完的人，回頭照著補完就好——`.venv` 沒建立過就先跑 `python -m venv .venv` 再 `pip install -r requirements.txt`；模型沒下載就跑 `ollama pull gemma4:e4b`。每個 [FAIL] 下面也都印了「修法」，照做即可；模型相關的項目沒過也沒關係，關卡 1 到 3 完全用不到模型，可以先往下做。
 
 ---
 
