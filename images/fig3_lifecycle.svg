@@ -1,0 +1,33 @@
+<svg viewBox="0 0 860 210" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="860" height="210" fill="white"/>
+
+  <!-- ① 使用者提問 -->
+  <rect x="20" y="46" width="175" height="94" rx="14" fill="#e8f0fe" stroke="#4285f4" stroke-width="1.5"/>
+  <text x="107" y="88" text-anchor="middle" font-size="15" fill="#202124">「分析 Initech</text>
+  <text x="107" y="112" text-anchor="middle" font-size="15" fill="#202124">的資安狀況」</text>
+  <text x="107" y="172" text-anchor="middle" font-size="13" font-weight="600" fill="#5f6368">① 你問</text>
+
+  <text x="217" y="98" text-anchor="middle" font-size="24" fill="#5f6368">→</text>
+
+  <!-- ② Agent 判斷 -->
+  <rect x="240" y="46" width="175" height="94" rx="14" fill="white" stroke="#5f6368" stroke-width="1.5"/>
+  <text x="327" y="88" text-anchor="middle" font-size="16" font-weight="700" fill="#202124">Agent（LLM）</text>
+  <text x="327" y="112" text-anchor="middle" font-size="14" fill="#5f6368">決定用哪個工具</text>
+  <text x="327" y="172" text-anchor="middle" font-size="13" font-weight="600" fill="#5f6368">② 判斷</text>
+
+  <text x="437" y="98" text-anchor="middle" font-size="24" fill="#5f6368">→</text>
+
+  <!-- ③ 呼叫工具 -->
+  <rect x="460" y="46" width="175" height="94" rx="14" fill="#e6f4ea" stroke="#34a853" stroke-width="1.5"/>
+  <text x="547" y="86" text-anchor="middle" font-size="14" font-family="monospace" fill="#188038">get_org_detail</text>
+  <text x="547" y="110" text-anchor="middle" font-size="14" font-family="monospace" fill="#188038">("Initech")</text>
+  <text x="547" y="172" text-anchor="middle" font-size="13" font-weight="600" fill="#5f6368">③ 呼叫工具</text>
+
+  <text x="657" y="98" text-anchor="middle" font-size="24" fill="#5f6368">→</text>
+
+  <!-- ④ 產出報告 -->
+  <rect x="680" y="46" width="175" height="94" rx="14" fill="#fef7e0" stroke="#fbbc04" stroke-width="1.5"/>
+  <text x="767" y="86" text-anchor="middle" font-size="16" font-weight="700" fill="#202124">資安報告</text>
+  <text x="767" y="112" text-anchor="middle" font-size="13" fill="#b06000">SQL Injection · 10 分</text>
+  <text x="767" y="172" text-anchor="middle" font-size="13" font-weight="600" fill="#5f6368">④ 生報告</text>
+</svg>

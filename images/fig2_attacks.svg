@@ -1,0 +1,43 @@
+<svg viewBox="0 0 860 250" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="860" height="250" fill="white"/>
+
+  <!-- 卡片 1: Initech / SQL Injection / 10 -->
+  <rect x="20" y="24" width="195" height="200" rx="12" fill="white" stroke="#ea4335" stroke-width="2"/>
+  <circle cx="185" cy="56" r="24" fill="#ea4335"/>
+  <text x="185" y="63" text-anchor="middle" fill="white" font-size="20" font-weight="700">10</text>
+  <text x="38" y="58" font-size="19" font-weight="700" fill="#202124">Initech</text>
+  <text x="38" y="104" font-size="12" fill="#5f6368">來源 IP</text>
+  <text x="38" y="126" font-size="14" font-family="monospace" fill="#202124">198.51.100.66</text>
+  <text x="38" y="168" font-size="16" font-weight="600" fill="#202124">SQL Injection</text>
+  <text x="38" y="204" font-size="14" font-weight="600" fill="#ea4335">高風險</text>
+
+  <!-- 卡片 2: Umbrella / 路徑遍歷 / 9 -->
+  <rect x="235" y="24" width="195" height="200" rx="12" fill="white" stroke="#ea4335" stroke-width="2"/>
+  <circle cx="400" cy="56" r="24" fill="#ea4335"/>
+  <text x="400" y="63" text-anchor="middle" fill="white" font-size="20" font-weight="700">9</text>
+  <text x="253" y="58" font-size="19" font-weight="700" fill="#202124">Umbrella</text>
+  <text x="253" y="104" font-size="12" fill="#5f6368">來源 IP</text>
+  <text x="253" y="126" font-size="14" font-family="monospace" fill="#202124">203.0.113.99</text>
+  <text x="253" y="168" font-size="16" font-weight="600" fill="#202124">路徑遍歷</text>
+  <text x="253" y="204" font-size="14" font-weight="600" fill="#ea4335">高風險</text>
+
+  <!-- 卡片 3: Globex / 敏感路徑掃描 / 8 -->
+  <rect x="450" y="24" width="195" height="200" rx="12" fill="white" stroke="#ea4335" stroke-width="2"/>
+  <circle cx="615" cy="56" r="24" fill="#ea4335"/>
+  <text x="615" y="63" text-anchor="middle" fill="white" font-size="20" font-weight="700">8</text>
+  <text x="468" y="58" font-size="19" font-weight="700" fill="#202124">Globex</text>
+  <text x="468" y="104" font-size="12" fill="#5f6368">來源 IP</text>
+  <text x="468" y="126" font-size="14" font-family="monospace" fill="#202124">192.0.2.44</text>
+  <text x="468" y="168" font-size="16" font-weight="600" fill="#202124">敏感路徑掃描</text>
+  <text x="468" y="204" font-size="14" font-weight="600" fill="#ea4335">高風險</text>
+
+  <!-- 卡片 4: Acme / 高頻爬取 / 5 -->
+  <rect x="665" y="24" width="195" height="200" rx="12" fill="white" stroke="#fbbc04" stroke-width="2"/>
+  <circle cx="830" cy="56" r="24" fill="#fbbc04"/>
+  <text x="830" y="63" text-anchor="middle" fill="white" font-size="20" font-weight="700">5</text>
+  <text x="683" y="58" font-size="19" font-weight="700" fill="#202124">Acme</text>
+  <text x="683" y="104" font-size="12" fill="#5f6368">來源 IP</text>
+  <text x="683" y="126" font-size="14" font-family="monospace" fill="#202124">203.0.113.7</text>
+  <text x="683" y="168" font-size="16" font-weight="600" fill="#202124">高頻爬取</text>
+  <text x="683" y="204" font-size="14" font-weight="600" fill="#b06000">中風險</text>
+</svg>
