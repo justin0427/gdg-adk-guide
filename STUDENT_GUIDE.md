@@ -24,6 +24,8 @@
 - **Tools（工具）**：它的手，就是我們等一下用 Python 寫的幾個函式。
 - **Instruction（指令）**：它的工作守則，一段文字，告訴它什麼時候該用哪個工具。
 
+這是 ADK 的詳細教學，如果有興趣可以再深究：[Build and deploy a Python AI agent to Cloud Run](https://codelabs.developers.google.com/codelabs/cloud-run/tools-make-an-agent?hl=zh-tw#0)
+
 ---
 
 ## 關卡 0：準備環境
@@ -491,26 +493,3 @@ export OLLAMA_API_BASE="http://<我給的網址>:11434/v1"
 3. 加一種攻擊規則。在 `RISK_RULES` 裡加一條，例如偵測命令注入 `cmd=`（給 9 分），再重跑關卡 3，看抓不抓得到。
 4. 換一顆本機大腦（進階）。今天全程用地端 LLM——這是處理敏感資料時的刻意選擇。想比較不同模型，可以在 Ollama 下載另一個本機模型，例如 `ollama pull qwen2.5:7b`，再把 `MODEL_NAME` 改成同一個模型名稱；工具和守則都不用動，資料也一樣不出門。
 5. 進階挑戰：挑一家看起來低風險的公司，請 Agent 分析它的 IP 明細。不要只看風險分數，也觀察每個 IP 的請求分布、時間分布和常用 API；如果你覺得某個模式「很正常但又怪怪的」，試著寫一條新規則把它抓出來。
-
----
-
-## 帶回家的一頁重點
-
-一支 Agent 由三個部分組成：模型（`LiteLlm(...)`）、工具（一串函式）、指令（一段守則字串）。
-
-做這個 demo 照這組指令跑：
-
-```bash 終端機
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-python generate_logs.py       # 產資料
-python soc_agent/agent.py     # 驗工具（還沒接 AI）
-adk web                       # 跟 Agent 對話
-```
-
-寫工具時最關鍵的一件事：清楚的 docstring 加上明確的型別，Agent 才知道什麼時候、該怎麼呼叫它。
-
-最後記得：今天的模型從頭到尾跑在你自己的電腦上。處理敏感資料時，「資料不出門」這件事本身就是資安。
-
-把這個專案帶回家，把三個工具換成你自己的題目——查天氣、記帳、查課表都行——你就有一支屬於自己的 Agent 了。
