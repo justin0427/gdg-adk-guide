@@ -30,23 +30,15 @@
 
 ## 關卡 0：準備環境
 
-先建立這個專案專用的虛擬環境，啟動後再安裝套件：
+前置作業應該已經把 Python 環境、Ollama、`gemma4:e4b` 都裝好了。先啟動這個專案的虛擬環境：
 
 ```bash 終端機
-python -m venv .venv
 .venv\Scripts\activate
-pip install -r requirements.txt
 ```
 
 確認一下：終端機前面出現 `(.venv)`，代表你已經進入這個專案的乾淨 Python 環境。
 
-接著準備地端模型（也就是 Agent 的大腦）。[Ollama](https://ollama.com/) 是最常用的地端 LLM 執行工具，安裝之後下載一個開源模型：
-
-```bash 終端機
-ollama pull gemma4:e4b
-```
-
-最後跑一次環境健檢，一個指令幫你檢查六件事（Python 版本、兩個套件、adk 指令、示範資料、模型服務）：
+接著跑一次環境健檢，一個指令幫你檢查六件事（Python 版本、兩個套件、adk 指令、示範資料、模型服務）：
 
 ```bash 終端機
 python check_env.py
@@ -54,7 +46,7 @@ python check_env.py
 
 確認一下：健檢顯示全部 [OK] 就緒。「示範資料」那一項要到關卡 1 之後才會過，現在紅的很正常。
 
-如果出問題：出現 `externally-managed-environment`，代表你沒有先啟動 `.venv` 就安裝套件；回到本關第一個指令區塊重跑一次。每個 [FAIL] 下面也都印了「修法」，照做即可；模型相關的項目沒過也沒關係，關卡 1 到 3 完全用不到模型，可以先往下做。
+如果出問題：前置作業沒做完的人，回頭照著補完就好——`.venv` 沒建立過就先跑 `python -m venv .venv` 再 `pip install -r requirements.txt`；模型沒下載就跑 `ollama pull gemma4:e4b`。每個 [FAIL] 下面也都印了「修法」，照做即可；模型相關的項目沒過也沒關係，關卡 1 到 3 完全用不到模型，可以先往下做。
 
 ---
 
