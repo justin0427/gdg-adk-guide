@@ -1,6 +1,6 @@
 <p align="center"><img src="images/gdgc-logo.svg" alt="Google Developer Groups On Campus" width="520" class="logo-light"><img src="images/gdgc-logo-dark.svg" alt="Google Developer Groups On Campus" width="520" class="logo-dark"></p>
 
-# 用 Google ADK ＋ 地端 LLM 打造你的第一支 AI Agent
+# 用 Google ADK ＋ 地端 LLM 打造你的第一支資安分析 AI Agent
 
 這份講義是給你自己照著做的。我們會從零打造一支「資安日誌分析 Agent」——做完之後，你只要用一句話，它就能幫你把一大包網站存取紀錄分類、找出可疑的攻擊、再寫成一份資安報告。而且整堂課的 AI 模型都跑在你自己的電腦上（地端 LLM）——資安日誌這種敏感資料，本來就不該隨便送上雲端。
 
