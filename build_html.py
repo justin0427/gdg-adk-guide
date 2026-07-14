@@ -221,8 +221,10 @@ code[data-code]:hover::before,code[data-code]:focus::before{display:none}
   box-shadow:0 6px 22px rgba(0,0,0,.35);font-size:13px;line-height:1.5;z-index:100}
 .tip-popover.is-visible{display:block}
 .tip-popover-label{margin-bottom:7px}
+.tip-popover-sublabel{font-size:11px;color:#9aa0a6;margin:9px 0 4px;text-transform:uppercase;letter-spacing:.03em}
 .tip-popover pre{margin:0;padding:9px 10px;overflow-x:auto;background:#11151d;border:1px solid #303746;
   border-radius:5px;color:#ff8f87;font:13px/1.5 'SF Mono',Consolas,'Roboto Mono',monospace;white-space:pre-wrap}
+.tip-popover pre.tip-popover-sql{color:#7ec4ff}
 .codeblock{margin:1.1em 0}
 .codehead{display:flex;justify-content:space-between;align-items:center;gap:12px;
   background:#171b24;border-radius:10px 10px 0 0;padding:7px 14px;border-bottom:1px solid #2a3040}
@@ -376,9 +378,20 @@ COPY_JS = """
   pop.setAttribute('role', 'tooltip');
   var label = document.createElement('div');
   label.className = 'tip-popover-label';
+  var reqSub = document.createElement('div');
+  reqSub.className = 'tip-popover-sublabel';
+  reqSub.textContent = '請求範例';
   var pre = document.createElement('pre');
+  var sqlSub = document.createElement('div');
+  sqlSub.className = 'tip-popover-sublabel';
+  sqlSub.textContent = '後端如果直接把參數拼進 SQL，查詢會變成';
+  var sqlPre = document.createElement('pre');
+  sqlPre.className = 'tip-popover-sql';
   pop.appendChild(label);
+  pop.appendChild(reqSub);
   pop.appendChild(pre);
+  pop.appendChild(sqlSub);
+  pop.appendChild(sqlPre);
   document.body.appendChild(pop);
   var hideTimer;
 
@@ -389,6 +402,10 @@ COPY_JS = """
     clearTimeout(hideTimer);
     label.textContent = el.getAttribute('data-tip') || '';
     pre.textContent = el.getAttribute('data-code') || '';
+    var sql = el.getAttribute('data-sql') || '';
+    sqlSub.style.display = sql ? '' : 'none';
+    sqlPre.style.display = sql ? '' : 'none';
+    sqlPre.textContent = sql;
     pop.classList.add('is-visible');
     var rect = el.getBoundingClientRect();
     var width = Math.min(360, window.innerWidth - 24);
@@ -417,12 +434,22 @@ COPY_JS = """
 # =============================================================================
 # 行內語法
 # =============================================================================
-# SQL Injection 那三個語法碎片額外配一則真實請求範例，hover/點擊時彈窗顯示，
-# 讓不熟資安術語的人一眼看懂「這串字實際出現在請求裡長怎樣」。
+# SQL Injection 那三個語法碎片額外配一則真實請求範例＋後端可能拼出來的查詢語句，
+# hover/點擊時彈窗顯示——只看請求看不出危險在哪，要接著看查詢語句才知道為什麼能繞過驗證、撈到別的表。
+# (請求範例, 後端如果直接把參數拼進 SQL 字串，查詢會變成什麼樣子)
 _SQL_TIP_EXAMPLES = {
-    "union … select … from": "GET /api/orders?id=1 UNION SELECT username, password FROM users",
-    "' or '1'='1": "GET /login?user=' OR '1'='1",
-    "--": "GET /login?user=admin' --",
+    "union … select … from": (
+        "GET /api/orders?id=1 UNION SELECT username, password FROM users",
+        "SELECT product, price FROM orders WHERE id = 1\nUNION SELECT username, password FROM users",
+    ),
+    "' or '1'='1": (
+        "GET /login?user=' OR '1'='1",
+        "SELECT * FROM users WHERE username = '' OR '1'='1'",
+    ),
+    "--": (
+        "GET /login?user=admin' --",
+        "SELECT * FROM users WHERE username = 'admin' --' AND password = '...'",
+    ),
 }
 
 
@@ -431,17 +458,32 @@ def _code_tip(m):
     attrs = f'data-tip="{tip.replace(chr(34), "&quot;")}"'
     example = _SQL_TIP_EXAMPLES.get(code)
     if example:
-        attrs += f' data-code="{html.escape(example, quote=True)}"'
+        req, sql = example
+        attrs += f' data-code="{html.escape(req, quote=True)}"'
+        attrs += f' data-sql="{html.escape(sql, quote=True)}"'
     return f'<code {attrs}>{code}</code>'
 
 
 def inline(t):
     t = html.escape(t, quote=False)
     t = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', t)
-    t = re.sub(r'`([^`]+)`\{([^}]+)\}', _code_tip, t)
-    t = re.sub(r'`([^`]+)`', r'<code>\1</code>', t)
+
+    # code span 先轉成 HTML，但存進佔位符、不直接放回字串——不然像 SQL 範例裡的
+    # `SELECT * FROM users` 這種內容一放回去，底下的 *斜體* 規則會把它當成
+    # markdown 語法，跨好幾個 code span 配對，整段吃掉。
+    placeholders = []
+
+    def stash(fragment):
+        placeholders.append(fragment)
+        return f'\x00{len(placeholders) - 1}\x00'
+
+    t = re.sub(r'`([^`]+)`\{([^}]+)\}', lambda m: stash(_code_tip(m)), t)
+    t = re.sub(r'`([^`]+)`', lambda m: stash(f'<code>{m.group(1)}</code>'), t)
+
     t = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', t)
     t = re.sub(r'(?<!\*)\*([^*]+)\*(?!\*)', r'<em>\1</em>', t)
+
+    t = re.sub(r'\x00(\d+)\x00', lambda m: placeholders[int(m.group(1))], t)
     return t
 
 

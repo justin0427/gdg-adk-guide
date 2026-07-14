@@ -50,8 +50,10 @@ code[data-code]:hover::before,code[data-code]:focus::before{display:none}
   box-shadow:0 6px 22px rgba(0,0,0,.35);font-size:13px;line-height:1.5;z-index:100}
 .tip-popover.is-visible{display:block}
 .tip-popover-label{margin-bottom:7px}
+.tip-popover-sublabel{font-size:11px;color:#9aa0a6;margin:9px 0 4px;text-transform:uppercase;letter-spacing:.03em}
 .tip-popover pre{margin:0;padding:9px 10px;overflow-x:auto;background:#11151d;border:1px solid #303746;
   border-radius:5px;color:#ff8f87;font:13px/1.5 'SF Mono',Consolas,'Roboto Mono',monospace;white-space:pre-wrap}
+.tip-popover pre.tip-popover-sql{color:#7ec4ff}
 .codeblock{margin:1.1em 0}
 .codehead{display:flex;justify-content:space-between;align-items:center;gap:12px;
   background:#171b24;border-radius:10px 10px 0 0;padding:7px 14px;border-bottom:1px solid #2a3040}
@@ -347,7 +349,8 @@ BURST_THRESHOLD = <span class="tok-num">50</span>
     <span class="tok-kw">return</span> hot</code></pre></div>
 <p>這裡的風險等級用了紅黃綠三色，那是等一下報告裡會實際印出來的標示，不是裝飾。</p>
 <p>貼完先別急著走，花兩分鐘看懂這些規則是怎麼「抓」到攻擊的。每一條規則，其實就是那種攻擊會在網址裡留下的指紋：</p>
-<ul><li><strong>SQL Injection</strong>：攻擊者想把資料庫語法塞進參數裡，規則找的就是這些語法碎片（滑鼠移上去看解釋）：<code data-tip="想把另一張表的內容一起撈出來，例如帳密表" data-code="GET /api/orders?id=1 UNION SELECT username, password FROM users">union … select … from</code>、<code data-tip="讓登入條件永遠成立，等於不用密碼就能登入" data-code="GET /login?user=&#x27; OR &#x27;1&#x27;=&#x27;1">' or '1'='1</code>、<code data-tip="把後面正常的 SQL 都變成註解，等於直接砍掉" data-code="GET /login?user=admin&#x27; --">--</code>。</li><li><strong>路徑遍歷</strong>：<code data-tip="「上一層目錄」，連打十幾個就能跳出網站根目錄">../</code> 連打十幾個就能跳出網站根目錄，去讀 <code data-tip="Linux 系統的帳號清單檔，等於摸到系統底層">/etc/passwd</code> 這種系統檔，指紋就是一串 <code>../</code> 加上敏感檔名。</li><li><strong>敏感路徑存取</strong>：攻擊前的踩點，拿字典檔到處亂敲這些不該公開的路徑：<code data-tip="存了資料庫密碼、API 金鑰等機密設定">/.env</code>、<code data-tip="整個版本控制紀錄，可能連原始碼都在裡面">/.git</code>、<code data-tip="資料庫管理後台，找到就能直接動資料庫">/phpmyadmin</code>，敲到一個就撿到寶。</li><li><strong>高頻爆量</strong>：四種裡唯一不看內容、只看行為的——正常人一天幾百次請求攤在十二小時，爬蟲一分鐘就打兩百次，用「速率」就分得開。</li></ul>
+<ul><li><strong>SQL Injection</strong>：攻擊者想把資料庫語法塞進參數裡，規則找的就是這些語法碎片（滑鼠移上去看解釋）：<code data-tip="想把另一張表的內容一起撈出來，例如帳密表" data-code="GET /api/orders?id=1 UNION SELECT username, password FROM users" data-sql="SELECT product, price FROM orders WHERE id = 1
+UNION SELECT username, password FROM users">union … select … from</code>、<code data-tip="讓登入條件永遠成立，等於不用密碼就能登入" data-code="GET /login?user=&#x27; OR &#x27;1&#x27;=&#x27;1" data-sql="SELECT * FROM users WHERE username = &#x27;&#x27; OR &#x27;1&#x27;=&#x27;1&#x27;">' or '1'='1</code>、<code data-tip="把後面正常的 SQL 都變成註解，等於直接砍掉" data-code="GET /login?user=admin&#x27; --" data-sql="SELECT * FROM users WHERE username = &#x27;admin&#x27; --&#x27; AND password = &#x27;...&#x27;">--</code>。</li><li><strong>路徑遍歷</strong>：<code data-tip="「上一層目錄」，連打十幾個就能跳出網站根目錄">../</code> 連打十幾個就能跳出網站根目錄，去讀 <code data-tip="Linux 系統的帳號清單檔，等於摸到系統底層">/etc/passwd</code> 這種系統檔，指紋就是一串 <code>../</code> 加上敏感檔名。</li><li><strong>敏感路徑存取</strong>：攻擊前的踩點，拿字典檔到處亂敲這些不該公開的路徑：<code data-tip="存了資料庫密碼、API 金鑰等機密設定">/.env</code>、<code data-tip="整個版本控制紀錄，可能連原始碼都在裡面">/.git</code>、<code data-tip="資料庫管理後台，找到就能直接動資料庫">/phpmyadmin</code>，敲到一個就撿到寶。</li><li><strong>高頻爆量</strong>：四種裡唯一不看內容、只看行為的——正常人一天幾百次請求攤在十二小時，爬蟲一分鐘就打兩百次，用「速率」就分得開。</li></ul>
 <p>再注意標了「CRS」的那幾條：它們不是我們自己編的，是直接取自 OWASP Core Rule Set——全世界的 WAF（網站應用程式防火牆）共同在用、共同維護的官方規則庫。你剛剛貼上的，是業界第一線真的在跑的規則。順帶一提，官方的「路徑遍歷」規則一條長達近七百個字元，因為要涵蓋幾十種編碼繞過，課堂上我們用的是可讀版。</p>
 <h3>2-3　你的第一個工具：list_orgs（自己打打看）</h3>
 <p>在 ADK 裡，一個「工具」就是一個普通的 Python 函式。但有兩個地方是特別寫給 Agent 看的：一個是 docstring（三引號裡的說明），Agent 靠它判斷「什麼情況該呼叫我」；另一個是型別和回傳，讓 Agent 知道怎麼用、會拿到什麼。</p>
@@ -719,9 +722,20 @@ Cyberdyne 🟢 低風險   （沒有列出任何可疑行為）</code></pre></di
   pop.setAttribute('role', 'tooltip');
   var label = document.createElement('div');
   label.className = 'tip-popover-label';
+  var reqSub = document.createElement('div');
+  reqSub.className = 'tip-popover-sublabel';
+  reqSub.textContent = '請求範例';
   var pre = document.createElement('pre');
+  var sqlSub = document.createElement('div');
+  sqlSub.className = 'tip-popover-sublabel';
+  sqlSub.textContent = '後端如果直接把參數拼進 SQL，查詢會變成';
+  var sqlPre = document.createElement('pre');
+  sqlPre.className = 'tip-popover-sql';
   pop.appendChild(label);
+  pop.appendChild(reqSub);
   pop.appendChild(pre);
+  pop.appendChild(sqlSub);
+  pop.appendChild(sqlPre);
   document.body.appendChild(pop);
   var hideTimer;
 
@@ -732,6 +746,10 @@ Cyberdyne 🟢 低風險   （沒有列出任何可疑行為）</code></pre></di
     clearTimeout(hideTimer);
     label.textContent = el.getAttribute('data-tip') || '';
     pre.textContent = el.getAttribute('data-code') || '';
+    var sql = el.getAttribute('data-sql') || '';
+    sqlSub.style.display = sql ? '' : 'none';
+    sqlPre.style.display = sql ? '' : 'none';
+    sqlPre.textContent = sql;
     pop.classList.add('is-visible');
     var rect = el.getBoundingClientRect();
     var width = Math.min(360, window.innerWidth - 24);
