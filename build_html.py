@@ -214,6 +214,15 @@ code[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:50%;bo
   box-shadow:0 4px 16px rgba(0,0,0,.28);z-index:20}
 code[data-tip]:hover::before{content:"";position:absolute;left:50%;bottom:calc(100% + 3px);
   transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);z-index:20}
+code[data-code]:hover::after,code[data-code]:focus::after,
+code[data-code]:hover::before,code[data-code]:focus::before{display:none}
+.tip-popover{position:fixed;display:none;width:min(360px,calc(100vw - 24px));padding:10px 12px;
+  background:var(--ink);color:var(--page);border:1px solid var(--border);border-radius:8px;
+  box-shadow:0 6px 22px rgba(0,0,0,.35);font-size:13px;line-height:1.5;z-index:100}
+.tip-popover.is-visible{display:block}
+.tip-popover-label{margin-bottom:7px}
+.tip-popover pre{margin:0;padding:9px 10px;overflow-x:auto;background:#11151d;border:1px solid #303746;
+  border-radius:5px;color:#ff8f87;font:13px/1.5 'SF Mono',Consolas,'Roboto Mono',monospace;white-space:pre-wrap}
 .codeblock{margin:1.1em 0}
 .codehead{display:flex;justify-content:space-between;align-items:center;gap:12px;
   background:#171b24;border-radius:10px 10px 0 0;padding:7px 14px;border-bottom:1px solid #2a3040}
@@ -253,6 +262,7 @@ body[data-os="windows"] .codeblock.has-os .codehead-label::after{content:" · Wi
 figure{margin:1.9em 0;text-align:center}
 figure svg{width:100%;height:auto;max-width:760px}
 figure img{width:100%;height:auto;max-width:760px;border-radius:8px;border:1px solid var(--border)}
+figure img.actual-shot{max-width:600px}
 figcaption{font-size:.88em;color:var(--muted);margin-top:.65em;line-height:1.6}
 table{border-collapse:collapse;width:100%;margin:1.3em 0;font-size:.95em}
 th,td{border:1px solid var(--border);padding:9px 13px;text-align:left;vertical-align:top}
@@ -359,15 +369,70 @@ COPY_JS = """
   });
 })();
 </script>
+<script>
+(function(){
+  var pop = document.createElement('div');
+  pop.className = 'tip-popover';
+  pop.setAttribute('role', 'tooltip');
+  var label = document.createElement('div');
+  label.className = 'tip-popover-label';
+  var pre = document.createElement('pre');
+  pop.appendChild(label);
+  pop.appendChild(pre);
+  document.body.appendChild(pop);
+  var hideTimer;
+
+  function hide(){
+    pop.classList.remove('is-visible');
+  }
+  function show(el){
+    clearTimeout(hideTimer);
+    label.textContent = el.getAttribute('data-tip') || '';
+    pre.textContent = el.getAttribute('data-code') || '';
+    pop.classList.add('is-visible');
+    var rect = el.getBoundingClientRect();
+    var width = Math.min(360, window.innerWidth - 24);
+    var left = Math.max(12, Math.min(rect.left + rect.width / 2 - width / 2, window.innerWidth - width - 12));
+    var top = rect.top - pop.offsetHeight - 10;
+    if(top < 12) top = rect.bottom + 10;
+    pop.style.width = width + 'px';
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+  }
+  document.querySelectorAll('code[data-code]').forEach(function(el){
+    el.setAttribute('tabindex', '0');
+    el.addEventListener('mouseenter', function(){ show(el); });
+    el.addEventListener('focus', function(){ show(el); });
+    el.addEventListener('click', function(){
+      if(pop.classList.contains('is-visible')) hide(); else show(el);
+    });
+    el.addEventListener('mouseleave', function(){ hideTimer = setTimeout(hide, 120); });
+    el.addEventListener('blur', hide);
+  });
+})();
+</script>
 """
 
 
 # =============================================================================
 # 行內語法
 # =============================================================================
+# SQL Injection 那三個語法碎片額外配一則真實請求範例，hover/點擊時彈窗顯示，
+# 讓不熟資安術語的人一眼看懂「這串字實際出現在請求裡長怎樣」。
+_SQL_TIP_EXAMPLES = {
+    "union … select … from": "GET /api/orders?id=1 UNION SELECT username, password FROM users",
+    "' or '1'='1": "GET /login?user=' OR '1'='1",
+    "--": "GET /login?user=admin' --",
+}
+
+
 def _code_tip(m):
     code, tip = m.group(1), m.group(2)
-    return f'<code data-tip="{tip.replace(chr(34), "&quot;")}">{code}</code>'
+    attrs = f'data-tip="{tip.replace(chr(34), "&quot;")}"'
+    example = _SQL_TIP_EXAMPLES.get(code)
+    if example:
+        attrs += f' data-code="{html.escape(example, quote=True)}"'
+    return f'<code {attrs}>{code}</code>'
 
 
 def inline(t):
@@ -387,7 +452,9 @@ def embed_image(alt, path):
         with open(fpath, encoding="utf-8") as f:
             svg = re.sub(r'<\?xml.*?\?>', '', f.read(), flags=re.S).strip()
         return svg
-    return f'<img src="{html.escape(path)}" alt="{html.escape(alt)}"/>'
+    # 實際截圖（screenshot_ 開頭）用比講義示意圖窄一點的寬度，比例比較好看
+    cls = ' class="actual-shot"' if fname.startswith("screenshot_") else ""
+    return f'<img{cls} src="{html.escape(path)}" alt="{html.escape(alt)}"/>'
 
 
 def inline_svg_imgs(block):
