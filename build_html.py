@@ -147,12 +147,22 @@ def mac_shell(code):
     return '\n'.join(out)
 
 
+def windows_shell(code):
+    """把教材中的 POSIX 環境變數指令轉為 Windows PowerShell。"""
+    out = []
+    for line in code.split('\n'):
+        line = line.replace(r'.venv\Scripts\activate', r'.\.venv\Scripts\Activate.ps1')
+        line = re.sub(r'^(\s*)export\s+([A-Za-z_]\w*)=(.*)$', r'\1$env:\2 = \3', line)
+        out.append(line)
+    return '\n'.join(out)
+
+
 def should_make_os_tabs(lang, label, code):
     if lang.lower() not in ("bash", "sh", "shell"):
         return False
     if "預期輸出" in label or "不用" in label:
         return False
-    return any(re.match(r'\s*(python|pip)\b', line) or r'.venv\Scripts\activate' in line
+    return any(re.match(r'\s*(python|pip|export)\b', line) or r'.venv\Scripts\activate' in line
                for line in code.split('\n'))
 
 
@@ -163,7 +173,7 @@ def render_codeblock(lang, label, code, readonly):
             f'{btn}</div>') if (label or btn) else ''
     if should_make_os_tabs(lang, label, code):
         mac = highlight(mac_shell(code), lang)
-        win = highlight(code, lang)
+        win = highlight(windows_shell(code), lang)
         return ('<div class="codeblock has-os">' + head +
                 '<div class="os-variant" data-os="mac"><pre class="code"><code>' + mac +
                 '</code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code>' +
