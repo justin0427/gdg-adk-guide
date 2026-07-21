@@ -1,5 +1,5 @@
-<svg viewBox="0 0 860 250" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif">
-  <rect width="860" height="250" fill="white"/>
+<svg viewBox="0 0 1095 250" xmlns="http://www.w3.org/2000/svg" font-family="'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif">
+  <rect width="1095" height="250" fill="white"/>
 
   <!-- 卡片 1: Initech / SQL Injection / 10 -->
   <rect x="20" y="24" width="195" height="200" rx="12" fill="white" stroke="#ea4335" stroke-width="2"/>
@@ -40,4 +40,14 @@
   <text x="683" y="126" font-size="14" font-family="monospace" fill="#202124">203.0.113.7</text>
   <text x="683" y="168" font-size="16" font-weight="600" fill="#202124">高頻爬取</text>
   <text x="683" y="204" font-size="14" font-weight="600" fill="#b06000">中風險</text>
+
+  <!-- 卡片 5: Cyberdyne / 未偵測到攻擊 / 0（看起來乾淨） -->
+  <rect x="880" y="24" width="195" height="200" rx="12" fill="white" stroke="#34a853" stroke-width="2"/>
+  <circle cx="1045" cy="56" r="24" fill="#34a853"/>
+  <text x="1045" y="63" text-anchor="middle" fill="white" font-size="20" font-weight="700">0</text>
+  <text x="898" y="58" font-size="19" font-weight="700" fill="#202124">Cyberdyne</text>
+  <text x="898" y="104" font-size="12" fill="#5f6368">來源 IP</text>
+  <text x="898" y="126" font-size="14" font-family="monospace" fill="#5f6368">—</text>
+  <text x="898" y="168" font-size="16" font-weight="600" fill="#5f6368">未偵測到攻擊</text>
+  <text x="898" y="204" font-size="14" font-weight="600" fill="#188038">低風險</text>
 </svg>
