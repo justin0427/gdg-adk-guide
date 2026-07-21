@@ -200,9 +200,9 @@ ul.task-list{list-style:none;padding-left:0}
 <hr/>
 <h2>關卡 0：準備環境</h2>
 <p><a href="https://justin0427.github.io/gdg-adk-demo/docs/PREWORK.html">前置作業</a>應該已經把 Python 環境、Ollama、模型（<code>gemma4:e4b</code>，記憶體較少的人是 <code>gemma4:e2b</code>）都裝好了。先啟動這個專案的虛擬環境：</p>
-<div class="codeblock has-os"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><div class="os-variant" data-os="mac"><pre class="code"><code><span class="tok-cmd">source</span> .venv/bin/activate</code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code>.venv\Scripts\activate</code></pre></div></div>
+<div class="codeblock has-os"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><div class="os-variant" data-os="mac"><pre class="code"><code><span class="tok-cmd">source</span> .venv/bin/activate</code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code>.\.venv\Scripts\Activate.ps1</code></pre></div></div>
 <div class="callout info"><p><strong>確認一下</strong>：終端機前面出現 <code>(.venv)</code>，代表你已經進入這個專案的乾淨 Python 環境。</p></div>
-<p>接著跑一次環境健檢，一個指令幫你檢查六件事（Python 版本、兩個套件、adk 指令、示範資料、模型服務）：</p>
+<p>接著跑一次環境健檢，一個指令幫你檢查七件事（Python 版本、兩個套件、adk 指令、示範資料、LLM 服務連線、模型）：</p>
 <div class="codeblock has-os"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><div class="os-variant" data-os="mac"><pre class="code"><code><span class="tok-cmd">python3</span> check_env.py</code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code><span class="tok-cmd">python</span> check_env.py</code></pre></div></div>
 <div class="callout info"><p><strong>確認一下</strong>：健檢顯示全部 [OK] 就緒。「示範資料」那一項要到關卡 1 之後才會過，現在紅的很正常。</p></div>
 <div class="callout warn"><p><strong>如果出問題</strong>：<a href="https://justin0427.github.io/gdg-adk-demo/docs/PREWORK.html">前置作業</a>沒做完的人，回頭照著補完就好——<code>.venv</code> 沒建立過就先跑 <code>python -m venv .venv</code> 再 <code>pip install -r requirements.txt</code>；模型沒下載就跑 <code>ollama pull gemma4:e4b</code>（記憶體只有 8GB 或以下的人，改跑 <code>ollama pull gemma4:e2b</code>）。每個 [FAIL] 下面也都印了「修法」，照做即可；模型相關的項目沒過也沒關係，關卡 1 到 3 完全用不到模型，可以先往下做。</p></div>
@@ -587,7 +587,7 @@ Cyberdyne 🟢 低風險   （沒有列出任何可疑行為）</code></pre></di
   <text x="767" y="172" text-anchor="middle" font-size="13" font-weight="600" fill="#5f6368">④ 生報告</text>
 </svg><figcaption>圖 4：以「分析 Initech」為例，Agent 判斷後呼叫 get_org_detail，再把工具的結果寫成報告。</figcaption></figure>
 <p>用共用伺服器的同學，先在終端機設好網址再跑 <code>adk web</code>：</p>
-<div class="codeblock"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><pre class="code"><code><span class="tok-cmd">export</span> OLLAMA_API_BASE=<span class="tok-str">&quot;http://&lt;我給的網址&gt;:11434/v1&quot;</span></code></pre></div>
+<div class="codeblock has-os"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><div class="os-variant" data-os="mac"><pre class="code"><code><span class="tok-cmd">export</span> OLLAMA_API_BASE=<span class="tok-str">&quot;http://&lt;我給的網址&gt;:11434/v1&quot;</span></code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code><span class="tok-var">$env</span>:OLLAMA_API_BASE = <span class="tok-str">&quot;http://&lt;我給的網址&gt;:11434/v1&quot;</span></code></pre></div></div>
 <p>照順序問問看，一邊注意畫面上 Agent 呼叫了哪個工具：</p>
 <table><thead><tr><th>你問</th><th>Agent 會做</th></tr></thead><tbody><tr><td>這批 log 有哪些公司？</td><td>呼叫 list_orgs</td></tr><tr><td>幫我把 log 分類，看看每家公司的風險。</td><td>呼叫 classify_logs，回總覽</td></tr><tr><td>分析 Initech 的資安狀況，寫一份報告。</td><td>呼叫 get_org_detail，生出完整報告</td></tr></tbody></table>
 <p>當你問「分析 Initech」，它應該產出一份報告，裡面有風險評分（SQL Injection 10 分）、可疑 IP <code>198.51.100.66</code>，還有具體的建議措施。</p>
