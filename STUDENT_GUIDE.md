@@ -188,12 +188,12 @@ def _burst_ips(records) -> set:
 
 貼完先別急著走，花兩分鐘看懂這些規則是怎麼「抓」到攻擊的。每一條規則，其實就是那種攻擊會在網址裡留下的指紋：
 
-- **SQL Injection**：攻擊者想把資料庫語法塞進參數裡，規則找的就是這些語法碎片（滑鼠移上去看解釋）：`union … select … from`{想把另一張表的內容一起撈出來，例如帳密表}、`' or '1'='1`{讓登入條件永遠成立，等於不用密碼就能登入}、`--`{把後面正常的 SQL 都變成註解，等於直接砍掉}。
-- **路徑遍歷**：`../`{「上一層目錄」，連打十幾個就能跳出網站根目錄} 連打十幾個就能跳出網站根目錄，去讀 `/etc/passwd`{Linux 系統的帳號清單檔，等於摸到系統底層} 這種系統檔，指紋就是一串 `../` 加上敏感檔名。
-- **敏感路徑存取**：攻擊前的踩點，拿字典檔到處亂敲這些不該公開的路徑：`/.env`{存了資料庫密碼、API 金鑰等機密設定}、`/.git`{整個版本控制紀錄，可能連原始碼都在裡面}、`/phpmyadmin`{資料庫管理後台，找到就能直接動資料庫}，敲到一個就撿到寶。
-- **高頻爆量**：四種裡唯一不看內容、只看行為的——正常人一天幾百次請求攤在十二小時，爬蟲一分鐘就打兩百次，用「速率」就分得開。
+- **SQL Injection**：攻擊者想把資料庫語法塞進參數裡，規則找的就是這些語法碎片（滑鼠移上去看解釋）：`union … select … from`{想把另一張表的內容一起撈出來，例如帳密表}、`' or '1'='1`{讓登入條件永遠成立，等於不用密碼就能登入}、`--`{把後面正常的 SQL 都變成註解，等於直接砍掉}。{{br}}想深入：[PortSwigger 的 SQL injection 教材（附線上實驗）](https://portswigger.net/web-security/sql-injection)、[中文入門介紹](https://ithelp.ithome.com.tw/articles/10240102)。
+- **路徑遍歷**：`../`{「上一層目錄」，連打十幾個就能跳出網站根目錄} 連打十幾個就能跳出網站根目錄，去讀 `/etc/passwd`{Linux 系統的帳號清單檔，等於摸到系統底層} 這種系統檔，指紋就是一串 `../` 加上敏感檔名。{{br}}想深入：[PortSwigger 的 Path traversal 教材](https://portswigger.net/web-security/file-path-traversal)。
+- **敏感路徑存取**：攻擊前的踩點，拿字典檔到處亂敲這些不該公開的路徑：`/.env`{存了資料庫密碼、API 金鑰等機密設定}、`/.git`{整個版本控制紀錄，可能連原始碼都在裡面}、`/phpmyadmin`{資料庫管理後台，找到就能直接動資料庫}，敲到一個就撿到寶。{{br}}想深入：[OWASP 安全設定錯誤（A05）](https://owasp.org/Top10/A05_2021-Security_Misconfiguration/)、[.git 目錄外洩會怎樣](https://www.security.gov.uk/services-resources/cyber-services-government/domain-and-vulnerability-knowledge-base/git-configuration-exposure/)。
+- **高頻爆量**：四種裡唯一不看內容、只看行為的——正常人一天幾百次請求攤在十二小時，爬蟲一分鐘就打兩百次，用「速率」就分得開。{{br}}想深入：Cloudflare 的 [暴力破解](https://www.cloudflare.com/learning/bots/brute-force-attack/) 與 [速率限制](https://www.cloudflare.com/learning/bots/what-is-rate-limiting/) 說明。
 
-再注意標了「CRS」的那幾條：它們不是我們自己編的，是直接取自 OWASP Core Rule Set——全世界的 WAF（網站應用程式防火牆）共同在用、共同維護的官方規則庫。你剛剛貼上的，是業界第一線真的在跑的規則。順帶一提，官方的「路徑遍歷」規則一條長達近七百個字元，因為要涵蓋幾十種編碼繞過，課堂上我們用的是可讀版。
+再注意標了「CRS」的那幾條：它們不是我們自己編的，是直接取自 OWASP Core Rule Set——全世界的 WAF（網站應用程式防火牆）共同在用、共同維護的官方規則庫。你剛剛貼上的，是業界第一線真的在跑的規則。順帶一提，官方的「路徑遍歷」規則一條長達近七百個字元，因為要涵蓋幾十種編碼繞過，課堂上我們用的是可讀版。{{br}}想系統性往下學，可以從 [OWASP Top 10](https://owasp.org/Top10/)（全世界公認的網站十大風險，這四種都在裡面）和 [PortSwigger Web Security Academy](https://portswigger.net/web-security)（免費、有實驗可動手）開始。
 
 ### 2-3　你的第一個工具：list_orgs（自己打打看）
 

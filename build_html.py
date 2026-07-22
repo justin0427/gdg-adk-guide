@@ -494,6 +494,7 @@ def inline(t):
     t = re.sub(r'(?<!\*)\*([^*]+)\*(?!\*)', r'<em>\1</em>', t)
 
     t = re.sub(r'\x00(\d+)\x00', lambda m: placeholders[int(m.group(1))], t)
+    t = t.replace('{{br}}', '<br>')
     return t
 
 
