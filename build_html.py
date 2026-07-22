@@ -476,7 +476,7 @@ def _code_tip(m):
 
 def inline(t):
     t = html.escape(t, quote=False)
-    t = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', t)
+    t = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" target="_blank" rel="noopener noreferrer">\1</a>', t)
 
     # code span 先轉成 HTML，但存進佔位符、不直接放回字串——不然像 SQL 範例裡的
     # `SELECT * FROM users` 這種內容一放回去，底下的 *斜體* 規則會把它當成
