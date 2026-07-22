@@ -166,6 +166,28 @@ def should_make_os_tabs(lang, label, code):
                for line in code.split('\n'))
 
 
+def render_server_form():
+    """填 IP／Port／模型名稱，下面的 export / $env 指令即時跟著換。
+    輸出區塊刻意套用跟一般程式碼區塊相同的 has-os / codeblock 結構，
+    讓既有的複製鈕、macOS-Windows 切換邏輯直接沿用，不用另外寫一套。"""
+    form = (
+        '<div class="server-form">'
+        '<label>伺服器 IP<input type="text" class="server-form-input" data-field="ip" placeholder="192.168.1.10"></label>'
+        '<label>Port<input type="text" class="server-form-input" data-field="port" placeholder="11434"></label>'
+        '<label>模型名稱<input type="text" class="server-form-input" data-field="model" placeholder="gemma4:e4b"></label>'
+        '</div>'
+    )
+    output = (
+        '<div class="codeblock has-os server-form-output">'
+        '<div class="codehead"><span class="codehead-label">終端機</span>'
+        '<button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div>'
+        '<div class="os-variant" data-os="mac"><pre class="code"><code></code></pre></div>'
+        '<div class="os-variant" data-os="windows"><pre class="code"><code></code></pre></div>'
+        '</div>'
+    )
+    return form + output
+
+
 def render_codeblock(lang, label, code, readonly):
     btn = ('' if readonly else
            '<button class="copy-btn" type="button" aria-label="複製程式碼">複製</button>')
@@ -270,6 +292,15 @@ body[data-os="mac"] .os-variant[data-os="mac"],
 body[data-os="windows"] .os-variant[data-os="windows"]{display:block}
 .codeblock.has-os .codehead-label::after{content:" · macOS";color:#cfd3dc}
 body[data-os="windows"] .codeblock.has-os .codehead-label::after{content:" · Windows"}
+.server-form{display:flex;flex-wrap:wrap;gap:10px;margin:1.1em 0;padding:14px;
+  background:#171b24;border:1px solid #2a3040;border-radius:10px}
+.server-form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#9aa3b2;flex:1;min-width:130px}
+.server-form input{font-family:'SF Mono',Consolas,'Roboto Mono',monospace;font-size:13px;
+  background:#1f2430;color:#e6e6e6;border:1px solid #3d4557;border-radius:6px;padding:7px 10px;
+  width:100%;box-sizing:border-box}
+.server-form input::placeholder{color:#5c6370}
+.server-form input:focus{outline:none;border-color:var(--blue)}
+.server-form-output{margin-top:-4px}
 @media (max-width:560px){.os-switch{align-items:flex-start;flex-direction:column}.os-btn{min-height:44px}}
 figure{margin:1.9em 0;text-align:center}
 figure svg{width:100%;height:auto;max-width:760px}
@@ -364,6 +395,33 @@ COPY_JS = """
         btn.textContent = '請手動選取';
         setTimeout(function(){ btn.textContent = '複製'; }, 1800);
       });
+    });
+  });
+
+  // 共用伺服器表單：填 IP／Port／模型名稱，下面兩行 export / $env 指令即時跟著換；
+  // 複製鈕不用另外處理，沿用上面 .copy-btn 的邏輯（找目前作業系統對應的 os-variant）。
+  function escapeHtml(s){
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function updateServerForm(form){
+    var output = form.nextElementSibling;
+    if(!output || !output.classList.contains('server-form-output')) return;
+    var ip = form.querySelector('[data-field="ip"]').value.trim() || '<IP>';
+    var port = form.querySelector('[data-field="port"]').value.trim() || '11434';
+    var model = form.querySelector('[data-field="model"]').value.trim() || 'gemma4:e4b';
+    ip = escapeHtml(ip); port = escapeHtml(port); model = escapeHtml(model);
+    var url = 'http://' + ip + ':' + port + '/v1';
+    var mac = '<span class="tok-cmd">export</span> OLLAMA_API_BASE=<span class="tok-str">&quot;' + url + '&quot;</span>\\n' +
+              '<span class="tok-cmd">export</span> OLLAMA_MODEL=<span class="tok-str">&quot;' + model + '&quot;</span>';
+    var win = '<span class="tok-var">$env</span>:OLLAMA_API_BASE = <span class="tok-str">&quot;' + url + '&quot;</span>\\n' +
+              '<span class="tok-var">$env</span>:OLLAMA_MODEL = <span class="tok-str">&quot;' + model + '&quot;</span>';
+    output.querySelector('.os-variant[data-os="mac"] code').innerHTML = mac;
+    output.querySelector('.os-variant[data-os="windows"] code').innerHTML = win;
+  }
+  document.querySelectorAll('.server-form').forEach(function(form){
+    updateServerForm(form);
+    form.querySelectorAll('.server-form-input').forEach(function(inp){
+      inp.addEventListener('input', function(){ updateServerForm(form); });
     });
   });
 
@@ -561,6 +619,12 @@ def convert(md):
             inner_html = convert('\n'.join(inner))
             out.append(f'<div class="os-variant" data-os="{os_tag}">{inner_html}</div>')
             continue
+
+        # 共用伺服器連線設定表單：填 IP／Port／模型名稱，下面的指令即時跟著換，
+        # 複製鈕沿用一般 codeblock 的邏輯（找目前作業系統對應的 os-variant）。
+        if line.strip() == '{{server-form}}':
+            out.append(render_server_form())
+            i += 1; continue
 
         # 程式碼區塊（含語法高亮 + 檔頭標籤 + 複製鈕）
         # fence 格式：```lang 目標標籤（GitHub 只取第一個字做高亮，其餘忽略，相容安全）

@@ -407,11 +407,9 @@ adk web
 
 *圖 4：以「分析 Initech」為例，Agent 判斷後呼叫 get_org_detail，再把工具的結果寫成報告。*
 
-用共用伺服器的同學，先在終端機設好網址再跑 `adk web`：
+用共用伺服器的同學，先在終端機設好網址再跑 `adk web`——填好下面三個欄位，指令會自動幫你組好：
 
-```bash 終端機
-export OLLAMA_API_BASE="http://<我給的網址>:11434/v1"
-```
+{{server-form}}
 
 照順序問問看，一邊注意畫面上 Agent 呼叫了哪個工具：
 

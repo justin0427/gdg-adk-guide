@@ -89,6 +89,15 @@ body[data-os="mac"] .os-variant[data-os="mac"],
 body[data-os="windows"] .os-variant[data-os="windows"]{display:block}
 .codeblock.has-os .codehead-label::after{content:" · macOS";color:#cfd3dc}
 body[data-os="windows"] .codeblock.has-os .codehead-label::after{content:" · Windows"}
+.server-form{display:flex;flex-wrap:wrap;gap:10px;margin:1.1em 0;padding:14px;
+  background:#171b24;border:1px solid #2a3040;border-radius:10px}
+.server-form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#9aa3b2;flex:1;min-width:130px}
+.server-form input{font-family:'SF Mono',Consolas,'Roboto Mono',monospace;font-size:13px;
+  background:#1f2430;color:#e6e6e6;border:1px solid #3d4557;border-radius:6px;padding:7px 10px;
+  width:100%;box-sizing:border-box}
+.server-form input::placeholder{color:#5c6370}
+.server-form input:focus{outline:none;border-color:var(--blue)}
+.server-form-output{margin-top:-4px}
 @media (max-width:560px){.os-switch{align-items:flex-start;flex-direction:column}.os-btn{min-height:44px}}
 figure{margin:1.9em 0;text-align:center}
 figure svg{width:100%;height:auto;max-width:760px}
@@ -596,8 +605,8 @@ Cyberdyne 🟢 低風險   （沒有列出任何可疑行為）</code></pre></di
   <text x="767" y="112" text-anchor="middle" font-size="13" fill="#b06000">SQL Injection · 10 分</text>
   <text x="767" y="172" text-anchor="middle" font-size="13" font-weight="600" fill="#5f6368">④ 生報告</text>
 </svg><figcaption>圖 4：以「分析 Initech」為例，Agent 判斷後呼叫 get_org_detail，再把工具的結果寫成報告。</figcaption></figure>
-<p>用共用伺服器的同學，先在終端機設好網址再跑 <code>adk web</code>：</p>
-<div class="codeblock has-os"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><div class="os-variant" data-os="mac"><pre class="code"><code><span class="tok-cmd">export</span> OLLAMA_API_BASE=<span class="tok-str">&quot;http://&lt;我給的網址&gt;:11434/v1&quot;</span></code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code><span class="tok-var">$env</span>:OLLAMA_API_BASE = <span class="tok-str">&quot;http://&lt;我給的網址&gt;:11434/v1&quot;</span></code></pre></div></div>
+<p>用共用伺服器的同學，先在終端機設好網址再跑 <code>adk web</code>——填好下面三個欄位，指令會自動幫你組好：</p>
+<div class="server-form"><label>伺服器 IP<input type="text" class="server-form-input" data-field="ip" placeholder="192.168.1.10"></label><label>Port<input type="text" class="server-form-input" data-field="port" placeholder="11434"></label><label>模型名稱<input type="text" class="server-form-input" data-field="model" placeholder="gemma4:e4b"></label></div><div class="codeblock has-os server-form-output"><div class="codehead"><span class="codehead-label">終端機</span><button class="copy-btn" type="button" aria-label="複製程式碼">複製</button></div><div class="os-variant" data-os="mac"><pre class="code"><code></code></pre></div><div class="os-variant" data-os="windows"><pre class="code"><code></code></pre></div></div>
 <p>照順序問問看，一邊注意畫面上 Agent 呼叫了哪個工具：</p>
 <table><thead><tr><th>你問</th><th>Agent 會做</th></tr></thead><tbody><tr><td>這批 log 有哪些公司？</td><td>呼叫 list_orgs</td></tr><tr><td>幫我把 log 分類，看看每家公司的風險。</td><td>呼叫 classify_logs，回總覽</td></tr><tr><td>分析 Initech 的資安狀況，寫一份報告。</td><td>呼叫 get_org_detail，生出完整報告</td></tr></tbody></table>
 <p>當你問「分析 Initech」，它應該產出一份報告，裡面有風險評分（SQL Injection 10 分）、可疑 IP <code>198.51.100.66</code>，還有具體的建議措施。</p>
@@ -708,6 +717,33 @@ Cyberdyne 🟢 低風險   （沒有列出任何可疑行為）</code></pre></di
         btn.textContent = '請手動選取';
         setTimeout(function(){ btn.textContent = '複製'; }, 1800);
       });
+    });
+  });
+
+  // 共用伺服器表單：填 IP／Port／模型名稱，下面兩行 export / $env 指令即時跟著換；
+  // 複製鈕不用另外處理，沿用上面 .copy-btn 的邏輯（找目前作業系統對應的 os-variant）。
+  function escapeHtml(s){
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function updateServerForm(form){
+    var output = form.nextElementSibling;
+    if(!output || !output.classList.contains('server-form-output')) return;
+    var ip = form.querySelector('[data-field="ip"]').value.trim() || '<IP>';
+    var port = form.querySelector('[data-field="port"]').value.trim() || '11434';
+    var model = form.querySelector('[data-field="model"]').value.trim() || 'gemma4:e4b';
+    ip = escapeHtml(ip); port = escapeHtml(port); model = escapeHtml(model);
+    var url = 'http://' + ip + ':' + port + '/v1';
+    var mac = '<span class="tok-cmd">export</span> OLLAMA_API_BASE=<span class="tok-str">&quot;' + url + '&quot;</span>\n' +
+              '<span class="tok-cmd">export</span> OLLAMA_MODEL=<span class="tok-str">&quot;' + model + '&quot;</span>';
+    var win = '<span class="tok-var">$env</span>:OLLAMA_API_BASE = <span class="tok-str">&quot;' + url + '&quot;</span>\n' +
+              '<span class="tok-var">$env</span>:OLLAMA_MODEL = <span class="tok-str">&quot;' + model + '&quot;</span>';
+    output.querySelector('.os-variant[data-os="mac"] code').innerHTML = mac;
+    output.querySelector('.os-variant[data-os="windows"] code').innerHTML = win;
+  }
+  document.querySelectorAll('.server-form').forEach(function(form){
+    updateServerForm(form);
+    form.querySelectorAll('.server-form-input').forEach(function(inp){
+      inp.addEventListener('input', function(){ updateServerForm(form); });
     });
   });
 
