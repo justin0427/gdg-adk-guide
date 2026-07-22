@@ -290,6 +290,8 @@ pre.code code{background:none;color:inherit;padding:0;font-size:13.5px}
 .os-variant{display:none}
 body[data-os="mac"] .os-variant[data-os="mac"],
 body[data-os="windows"] .os-variant[data-os="windows"]{display:block}
+body[data-os="mac"] code .os-variant[data-os="mac"],
+body[data-os="windows"] code .os-variant[data-os="windows"]{display:inline}
 .codeblock.has-os .codehead-label::after{content:" · macOS";color:#cfd3dc}
 body[data-os="windows"] .codeblock.has-os .codehead-label::after{content:" · Windows"}
 .server-form{display:flex;flex-wrap:wrap;gap:10px;margin:1.1em 0;padding:14px;
@@ -532,6 +534,18 @@ def _code_tip(m):
     return f'<code {attrs}>{code}</code>'
 
 
+def _inline_code(m):
+    """行內 `code`：如果是 python/pip 開頭的指令，跟程式碼區塊一樣需要 macOS/Windows
+    兩個版本（例如 `python reset.py done` 在 mac 應該是 python3），不能只當純文字。"""
+    text = m.group(1)
+    if re.match(r'^(python|pip)\s', text):
+        mac_text, win_text = mac_shell(text), windows_shell(text)
+        if mac_text != win_text:
+            return (f'<code><span class="os-variant" data-os="mac">{mac_text}</span>'
+                     f'<span class="os-variant" data-os="windows">{win_text}</span></code>')
+    return f'<code>{text}</code>'
+
+
 def inline(t):
     t = html.escape(t, quote=False)
     t = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" target="_blank" rel="noopener noreferrer">\1</a>', t)
@@ -546,7 +560,7 @@ def inline(t):
         return f'\x00{len(placeholders) - 1}\x00'
 
     t = re.sub(r'`([^`]+)`\{([^}]+)\}', lambda m: stash(_code_tip(m)), t)
-    t = re.sub(r'`([^`]+)`', lambda m: stash(f'<code>{m.group(1)}</code>'), t)
+    t = re.sub(r'`([^`]+)`', lambda m: stash(_inline_code(m)), t)
 
     t = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', t)
     t = re.sub(r'(?<!\*)\*([^*]+)\*(?!\*)', r'<em>\1</em>', t)
